@@ -1,0 +1,16 @@
+node_modules/
+release/
+.tools/
+.agents/
+.claude/
+.impeccable/
+promo-video/
+cs2-toolbox-data/
+src/renderer/assets/
+build/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store
+Thumbs.db
