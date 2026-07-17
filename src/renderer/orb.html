@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CS2 Assistant Orb</title>
+    <link rel="stylesheet" href="orb.css" />
+  </head>
+  <body class="theme-light">
+    <div class="orb" id="orb">
+      <svg viewBox="0 0 100 100" class="orb-ring">
+        <circle cx="50" cy="50" r="43" class="orb-ring__bg"></circle>
+        <circle cx="50" cy="50" r="43" class="orb-ring__fg" id="orbRing"></circle>
+      </svg>
+      <div class="orb-core">
+        <span id="orbLabel">CS2</span>
+        <strong id="orbTime">--</strong>
+      </div>
+      <div class="orb-status" id="orbStatus">等待信号</div>
+      <span class="orb-pulse"></span>
+    </div>
+    <script src="shared.js"></script>
+    <script src="orb.js"></script>
+  </body>
+</html>
