@@ -1,0 +1,70 @@
+{
+  "name": "cs2-toolbox",
+  "productName": "CS2工具盒子",
+  "version": "1.0.5",
+  "description": "面向 CS2 玩家的本机工具盒子，支持 GSI 连接、游戏小窗和自动玩法。",
+  "main": "src/main/main.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron .",
+    "check": "node --check src/main/main.js && node --check src/preload/preload.js && node --check src/preload/orbPreload.js && node --check src/preload/monitorOverlayPreload.js && node --check src/preload/floatingMenuPreload.js && node --check src/renderer/shared.js && node --check src/renderer/app.js && node --check src/renderer/orb.js && node --check src/renderer/monitorOverlay.js && node --check src/renderer/floatingMenu.js",
+    "test": "npm run check && node scripts/test-bomb-duration.js && node scripts/test-kill-sound-local-player.js && node scripts/test-cfg-discovery.js && node scripts/test-renderer-shared.js && node scripts/test-motion-policy.js && node scripts/test-dialog-layout.js",
+    "dist": "electron-builder --win nsis portable",
+    "pack": "electron-builder --dir"
+  },
+  "keywords": [
+    "electron",
+    "cs2",
+    "gsi"
+  ],
+  "author": "Infatuation Studio",
+  "license": "MIT",
+  "copyright": "Copyright © 2026 Infatuation Studio. All rights reserved.",
+  "build": {
+    "appId": "com.infatuation.cs2toolbox",
+    "productName": "CS2工具盒子",
+    "copyright": "Copyright © 2026 Infatuation Studio. All rights reserved.",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "src/**/*",
+      "package.json"
+    ],
+    "asarUnpack": [
+      "src/renderer/assets/sounds/**/*"
+    ],
+    "electronLanguages": [
+      "zh-CN"
+    ],
+    "extraMetadata": {
+      "main": "src/main/main.js"
+    },
+    "win": {
+      "signAndEditExecutable": false,
+      "target": [
+        "nsis",
+        "portable"
+      ],
+      "icon": "build/icon.ico",
+      "artifactName": "${productName}-${version}-${arch}.${ext}"
+    },
+    "nsis": {
+      "artifactName": "${productName}-${version}-安装版-${arch}.${ext}",
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "CS2工具盒子",
+      "uninstallDisplayName": "CS2工具盒子"
+    },
+    "portable": {
+      "artifactName": "${productName}-${version}-便携版-${arch}.${ext}"
+    }
+  },
+  "devDependencies": {
+    "electron": "^31.7.7",
+    "electron-builder": "^24.13.3"
+  }
+}
