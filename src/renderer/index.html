@@ -1,0 +1,840 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CS2工具盒子</title>
+    <link rel="icon" href="assets/cs2tool-icon-light.png" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="theme-light is-loading">
+    <div class="launch-screen" aria-hidden="true">
+      <div class="launch-mark">
+        <span class="launch-mark__ring"></span>
+        <img class="theme-icon theme-icon--light" src="assets/cs2tool-icon-light.png" alt="" />
+        <img class="theme-icon theme-icon--dark" src="assets/cs2tool-icon-dark.png" alt="" />
+      </div>
+      <p>正在启动助手</p>
+    </div>
+
+    <div class="theme-wave" id="themeWave"></div>
+    <div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
+
+    <section class="onboarding-screen" id="onboardingScreen" aria-label="首次使用教程">
+          <button class="window-button onboarding-window-button" id="onboardingMinimizeButton" aria-label="最小化">-</button>
+      <button class="window-button onboarding-window-button onboarding-window-button--close" id="onboardingCloseButton" aria-label="关闭选项">×</button>
+      <article class="onboarding-simple">
+        <span id="onboardingKicker">CS2工具盒子</span>
+        <h1 id="onboardingTitle">CS2工具盒子</h1>
+        <p id="onboardingText">连接游戏，查看状态，自动执行你设置好的动作。</p>
+        <div class="onboarding-media" id="onboardingMedia" hidden></div>
+        <div class="onboarding-actions">
+          <button class="secondary-button" id="onboardingCfgButton" type="button" hidden>一键连接游戏</button>
+          <button class="primary-button" id="onboardingNextButton" type="button">继续</button>
+        </div>
+      </article>
+      <div class="onboarding-dots" id="onboardingDots" aria-label="教程进度"></div>
+    </section>
+
+    <main class="app-shell">
+      <header class="titlebar">
+        <div class="titlebar__left">
+            <span class="app-icon" aria-hidden="true">
+              <img class="theme-icon theme-icon--light" src="assets/cs2tool-icon-light.png" alt="" />
+              <img class="theme-icon theme-icon--dark" src="assets/cs2tool-icon-dark.png" alt="" />
+            </span>
+          <div>
+            <strong>CS2工具盒子</strong>
+            <small>游戏状态与自动功能</small>
+          </div>
+        </div>
+        <div class="titlebar__actions">
+          <label class="master-toggle" title="总开关">
+            <span id="masterEnabledText">运行中</span>
+            <input type="checkbox" id="masterEnabled" checked />
+            <i></i>
+          </label>
+          <button class="text-button" id="toggleOrbButton">游戏小窗</button>
+          <button class="window-button" id="minimizeButton" aria-label="最小化">-</button>
+          <button class="window-button" id="closeButton" aria-label="关闭选项">×</button>
+        </div>
+      </header>
+
+      <section class="app-body">
+        <aside class="sidebar" aria-label="导航">
+          <span class="nav-indicator" id="navIndicator" aria-hidden="true"></span>
+          <button class="nav-item is-active" data-target="overviewPanel"><span>状态</span><small>启动体检</small></button>
+          <button class="nav-item" data-target="monitorPanel"><span>监控</span><small>硬件数据</small></button>
+          <button class="nav-item" data-target="customPanel"><span>自动功能</span><small>规则预设</small></button>
+          <button class="nav-item" data-target="orbPanel"><span>悬浮球</span><small>小窗显示</small></button>
+          <button class="nav-item" data-target="setupPanel"><span>连接</span><small>游戏配置</small></button>
+          <button class="nav-item" data-target="diagnosticsPanel"><span>诊断</span><small>日志自检</small></button>
+          <button class="nav-item" data-target="settingsPanel"><span>设置</span><small>偏好选项</small></button>
+          <button class="nav-item" data-target="aboutPanel"><span>关于项目</span><small>反馈支持</small></button>
+          <button class="nav-item" data-target="sponsorPanel"><span>赞助</span><small>鸣谢名单</small></button>
+          <div class="sidebar-bottom">
+            <button class="theme-button" id="themeToggle" aria-label="切换主题">
+              <span class="theme-button__icon"></span>
+            </button>
+            <div class="sidebar-status">
+              <span id="serverDot" class="status-dot"></span>
+              <small id="serverText">等待游戏</small>
+            </div>
+          </div>
+        </aside>
+
+        <section class="workspace">
+          <section class="panel-page is-active" id="overviewPanel">
+            <section class="home-dashboard" aria-label="启动体检">
+              <header class="home-hero">
+                <div class="home-hero__copy">
+                  <span class="status-kicker" id="homeVerdictBadge">正在检查</span>
+                  <h1 id="homeVerdictTitle">CS2工具盒子</h1>
+                  <p id="homeVerdictHint">检查 CFG、游戏进程和 GSI 信号，确认软件能不能正常工作。</p>
+                </div>
+                <div class="home-hero__meter" aria-label="可用状态">
+                  <span id="homeReadyLabel">待检查</span>
+                  <strong id="homeReadyValue">--</strong>
+                </div>
+              </header>
+
+              <div class="home-layout">
+                <section class="health-panel" aria-label="关键检查项">
+                  <div class="health-panel__header">
+                    <div>
+                      <strong>启动体检</strong>
+                      <span>这四项都正常，软件才算真正可用。</span>
+                    </div>
+                  </div>
+
+                  <div class="health-list">
+                    <article class="health-row" id="healthCfg">
+                      <i></i>
+                      <div>
+                        <span>CFG 配置文件</span>
+                        <strong id="homeCfgState">检查中</strong>
+                        <p id="homeCfgDetail">正在读取配置状态。</p>
+                      </div>
+                      <small id="homeCfgPath">--</small>
+                    </article>
+
+                    <article class="health-row" id="healthGame">
+                      <i></i>
+                      <div>
+                        <span>CS2 游戏进程</span>
+                        <strong id="homeGameState">检查中</strong>
+                        <p id="homeGameDetail">正在确认游戏是否开启。</p>
+                      </div>
+                      <small id="homeGameTime">--</small>
+                    </article>
+
+                    <article class="health-row" id="healthGsi">
+                      <i></i>
+                      <div>
+                        <span>GSI 游戏信号</span>
+                        <strong id="homeGsiState">等待信号</strong>
+                        <p id="homeGsiDetail">进入游戏后，CS2 会把状态发给助手。</p>
+                      </div>
+                      <small id="homeGsiTime">--</small>
+                    </article>
+
+                    <article class="health-row" id="healthReady">
+                      <i></i>
+                      <div>
+                        <span>软件可用性</span>
+                        <strong id="homeUsableState">待检查</strong>
+                        <p id="homeUsableDetail">完成上面几项后，自动功能和小窗才能正常工作。</p>
+                      </div>
+                      <small id="homeUsableMeta">--</small>
+                    </article>
+                  </div>
+                </section>
+
+                <aside class="next-panel" aria-label="下一步">
+                  <div>
+                    <span>下一步</span>
+                    <strong id="homeNextTitle">等待检查</strong>
+                    <p id="homeNextDetail">软件会把需要处理的事情放在这里。</p>
+                  </div>
+                  <button class="primary-button" id="homeNextButton" type="button">去处理</button>
+                  <button class="secondary-button" id="selfCheckButton" type="button">一键自检</button>
+                  <div class="self-check-list" id="selfCheckList" aria-label="自检结果"></div>
+                  <dl class="home-summary">
+                    <div>
+                      <dt>自动功能</dt>
+                      <dd id="homeRulesText">--</dd>
+                    </div>
+                    <div>
+                      <dt>游戏小窗</dt>
+                      <dd id="homeOrbText">--</dd>
+                    </div>
+                    <div>
+                      <dt>接收服务</dt>
+                      <dd id="homeServerText">--</dd>
+                    </div>
+                  </dl>
+                </aside>
+              </div>
+
+              <div class="home-footnote" id="cfgHint">提示会只在需要你处理时显示。</div>
+            </section>
+          </section>
+
+          <section class="panel-page" id="monitorPanel">
+            <div class="section-header">
+              <div>
+                <h1>监控</h1>
+                <p>打开后实时读取系统能提供的硬件数据；读不到的项目会标为不可用。</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="monitorEnabled" />
+                <span></span>
+              </label>
+            </div>
+
+            <div class="metric-grid" id="monitorGrid"></div>
+            <div class="notice" id="monitorHint">监控关闭中。打开右上角开关后，每 2 秒刷新一次。</div>
+
+            <section class="feature-panel monitor-overlay-panel">
+              <div class="feature-panel__header">
+                <div>
+                  <strong>游戏内监控悬浮窗</strong>
+                  <span id="monitorOverlaySummary">关闭中。打开后会置顶显示你选择的数据。</span>
+                </div>
+                <div class="button-group">
+                  <button class="secondary-button" id="monitorOverlayResetButton" type="button">复位位置</button>
+                  <label class="switch">
+                    <input type="checkbox" id="monitorOverlayVisible" />
+                    <span></span>
+                  </label>
+                </div>
+              </div>
+              <div class="monitor-overlay-controls">
+                <label class="compact-field">
+                  <span>强调颜色</span>
+                  <select class="setting-select" id="monitorOverlayColor"></select>
+                </label>
+                <label class="compact-field">
+                  <span>透明度</span>
+                  <select class="setting-select" id="monitorOverlayOpacity"></select>
+                </label>
+                <label class="setting-chip">
+                  <input type="checkbox" id="monitorOverlayCompact" />
+                  <span>紧凑显示</span>
+                </label>
+              </div>
+              <div class="monitor-overlay-items" id="monitorOverlayItems" aria-label="监控悬浮窗显示项"></div>
+            </section>
+          </section>
+
+          <section class="panel-page" id="orbPanel">
+            <div class="section-header">
+              <div>
+                <h1>悬浮球设置</h1>
+                <p>配置游戏上方的小窗内容。默认保持 C4 自动提醒，需要时也可以改成固定数据。</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="orbPanelVisible" checked />
+                <span></span>
+              </label>
+            </div>
+
+            <div class="orb-settings-layout">
+              <section class="settings-list orb-settings-list" aria-label="悬浮球显示设置">
+                <div class="setting-row">
+                  <div>
+                    <strong>小窗尺寸</strong>
+                    <span>调整悬浮球高度和宽度。太大会挡视野，太小会影响读数。</span>
+                  </div>
+                  <select class="setting-select" id="orbSizeSelect" aria-label="悬浮球尺寸">
+                    <option value="80">小号 80px</option>
+                    <option value="92" selected>标准 92px</option>
+                    <option value="104">清晰 104px</option>
+                    <option value="116">大号 116px</option>
+                    <option value="128">醒目 128px</option>
+                  </select>
+                </div>
+                <div class="setting-row">
+                  <div>
+                    <strong>中间文字</strong>
+                    <span>控制悬浮球中心显示什么。自动模式会优先显示 C4 倒计时。</span>
+                  </div>
+                  <select class="setting-select" id="orbTextModeSelect" aria-label="悬浮球文字显示">
+                    <option value="auto" selected>自动提醒</option>
+                    <option value="status">连接状态</option>
+                    <option value="fps">游戏 FPS</option>
+                    <option value="health">血量</option>
+                    <option value="armor">护甲</option>
+                    <option value="roundKills">本回合击杀</option>
+                    <option value="roundTime">本回合剩余时间</option>
+                    <option value="bombTime">C4 剩余时间</option>
+                    <option value="c4">C4 状态</option>
+                    <option value="map">地图</option>
+                  </select>
+                </div>
+                <div class="setting-row">
+                  <div>
+                    <strong>圆环进度</strong>
+                    <span>控制外圈进度代表什么。选“关闭圆环”时只保留文字。</span>
+                  </div>
+                  <select class="setting-select" id="orbRingModeSelect" aria-label="悬浮球圆环显示">
+                    <option value="auto" selected>自动提醒</option>
+                    <option value="bombTime">C4 剩余时间</option>
+                    <option value="roundTime">本回合剩余时间</option>
+                    <option value="health">血量</option>
+                    <option value="armor">护甲</option>
+                    <option value="none">关闭圆环</option>
+                  </select>
+                </div>
+                <div class="setting-row">
+                  <div>
+                    <strong>位置复位</strong>
+                    <span>拖动悬浮球可以改变位置，显示异常时恢复到主屏幕右侧。</span>
+                  </div>
+                  <button class="secondary-button" id="orbPanelResetButton" type="button">复位位置</button>
+                </div>
+              </section>
+
+              <aside class="orb-settings-preview" aria-label="悬浮球预览">
+                <div class="orb-preview-shell">
+                  <div class="orb-preview" id="orbPreview">
+                    <svg viewBox="0 0 100 100" class="orb-preview__ring" aria-hidden="true">
+                      <circle cx="50" cy="50" r="43"></circle>
+                      <circle cx="50" cy="50" r="43" id="orbPreviewRing"></circle>
+                    </svg>
+                    <div>
+                      <span id="orbPreviewLabel">工具</span>
+                      <strong id="orbPreviewValue">待命</strong>
+                    </div>
+                    <small id="orbPreviewStatus">自动提醒</small>
+                  </div>
+                </div>
+                <dl class="orb-setting-readout">
+                  <div>
+                    <dt>文字</dt>
+                    <dd id="orbTextModeSummary">自动</dd>
+                  </div>
+                  <div>
+                    <dt>圆环</dt>
+                    <dd id="orbRingModeSummary">自动</dd>
+                  </div>
+                  <div>
+                    <dt>提示</dt>
+                    <dd>FPS 取决于系统监控能力，读不到时会显示 --。</dd>
+                  </div>
+                </dl>
+              </aside>
+            </div>
+          </section>
+
+          <section class="panel-page" id="setupPanel">
+            <div class="section-header">
+              <div>
+                <h1>连接</h1>
+                <p>让 CS2 把比赛状态发给助手。软件只接收本机信号，不注入、不读内存。</p>
+              </div>
+            </div>
+
+            <div class="settings-list">
+              <div class="setting-row">
+                <div>
+                  <strong>接收游戏状态</strong>
+                  <span id="serverDetailText">正在检查助手能不能收到游戏状态。</span>
+                </div>
+                <div class="button-group">
+                  <button class="secondary-button" id="testGsiButton">模拟状态</button>
+                  <button class="secondary-button" id="resetGsiButton">重置状态</button>
+                </div>
+              </div>
+              <div class="setting-row">
+                <div>
+                  <strong>游戏配置状态</strong>
+                  <span id="cfgStatusText">尚未完成配置</span>
+                </div>
+                <span class="status-badge is-muted" id="cfgStatusBadge">未写入</span>
+              </div>
+              <div class="setting-row">
+                <div>
+                  <strong>一键连接</strong>
+                  <span>自动找到 CS2 文件夹，并写入官方允许的状态配置。</span>
+                </div>
+                <button class="primary-button" id="autoInstallButton">自动写入</button>
+              </div>
+              <div class="setting-row">
+                <div>
+                  <strong>手动选择</strong>
+                  <span>一键连接失败时，手动选择 CS2 的配置文件夹。</span>
+                </div>
+                <button class="secondary-button" id="chooseDirButton">选择目录</button>
+              </div>
+              <div class="setting-row setting-row--path">
+                <div>
+                  <strong>当前路径</strong>
+                  <span id="cfgPathText">尚未写入</span>
+                </div>
+                <button class="secondary-button" id="openCfgButton">打开目录</button>
+              </div>
+            </div>
+            <div class="setup-guide">
+              <strong>连接只需要三步</strong>
+              <span>1. 点击“自动写入”或手动选择 cfg 文件夹。</span>
+              <span>2. 写入成功后关闭并重新打开 CS2。</span>
+              <span>3. 进入地图后，首页的 GSI 信号会自动变为正常。</span>
+            </div>
+          </section>
+
+          <section class="panel-page" id="customPanel">
+            <div class="section-header">
+              <div>
+                <h1>自动功能</h1>
+                <p>管理会自动触发的玩法和音效规则。</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="customEnabled" checked />
+                <span></span>
+              </label>
+            </div>
+
+            <div class="custom-toolbar">
+              <div>
+                <strong id="customEnabledText">自动功能已开启</strong>
+                <span id="customSummaryText">等待游戏状态</span>
+              </div>
+              <div class="button-group">
+                <button class="primary-button custom-add-button" id="customAddButton" type="button">添加预设</button>
+                <button class="secondary-button" id="customManualButton" type="button">新建规则</button>
+              </div>
+            </div>
+
+            <div class="custom-list" id="customList" aria-label="自动功能列表"></div>
+          </section>
+
+          <section class="panel-page" id="diagnosticsPanel">
+            <div class="section-header">
+              <div>
+                <h1>诊断</h1>
+                <p>排查“没声音、没触发、没收到信号”这类问题。需要反馈时，复制诊断信息发给开发者。</p>
+              </div>
+              <div class="button-group">
+                <button class="secondary-button" id="refreshDiagnosticsButton" type="button">刷新</button>
+                <button class="primary-button" id="copyDiagnosticsButton" type="button">复制诊断信息</button>
+              </div>
+            </div>
+
+            <div class="diagnostics-layout">
+              <section class="feature-panel">
+                <div class="feature-panel__header">
+                  <div>
+                    <strong>自检结果</strong>
+                    <span id="diagnosticsSummaryText">点击刷新后显示当前状态。</span>
+                  </div>
+                  <span class="status-badge is-muted" id="diagnosticsBadge">待检查</span>
+                </div>
+                <div class="self-check-list self-check-list--wide" id="diagnosticsCheckList"></div>
+              </section>
+
+              <section class="feature-panel">
+                <div class="feature-panel__header">
+                  <div>
+                    <strong>最近触发</strong>
+                    <span>自动功能和音效试听都会记录在这里。</span>
+                  </div>
+                </div>
+                <div class="diagnostic-log-list" id="diagnosticLogList"></div>
+              </section>
+
+              <section class="feature-panel feature-panel--wide">
+                <div class="feature-panel__header">
+                  <div>
+                    <strong>诊断文本</strong>
+                    <span>这里是反馈问题时使用的原始信息。</span>
+                  </div>
+                </div>
+                <pre class="diagnostic-text" id="diagnosticText">还没有生成诊断信息。</pre>
+              </section>
+            </div>
+          </section>
+
+          <section class="panel-page" id="settingsPanel">
+            <div class="section-header">
+              <div>
+                <h1>设置</h1>
+                <p>只保留常用选项，减少使用时的干扰。</p>
+              </div>
+            </div>
+
+            <div class="settings-filter" role="tablist" aria-label="设置分类">
+              <button class="is-active" type="button" data-settings-filter="basic" aria-selected="true">基础</button>
+              <button type="button" data-settings-filter="appearance" aria-selected="false">外观</button>
+              <button type="button" data-settings-filter="overlay" aria-selected="false">小窗</button>
+              <button type="button" data-settings-filter="sound" aria-selected="false">声音</button>
+              <button type="button" data-settings-filter="other" aria-selected="false">其他</button>
+            </div>
+
+            <div class="settings-page" data-settings-page>
+              <section class="settings-list setting-section is-active" data-settings-section="basic" aria-label="基础设置">
+                <div class="setting-row">
+                  <div>
+                    <strong>软件总开关</strong>
+                    <span>关闭后暂停自动功能、提醒和游戏小窗，软件本体仍可设置。</span>
+                  </div>
+                  <label class="switch">
+                    <input type="checkbox" id="settingsEnabled" checked />
+                    <span></span>
+                  </label>
+                </div>
+                <div class="setting-row">
+                  <div>
+                    <strong>低配置模式</strong>
+                    <span>关闭主窗口和小窗的动画，减少低配置电脑的卡顿。</span>
+                  </div>
+                  <label class="switch">
+                    <input type="checkbox" id="lowPerformanceMode" />
+                    <span></span>
+                  </label>
+                </div>
+                <div class="setting-row">
+                  <div>
+                    <strong>开机自启动</strong>
+                    <span>进入桌面后自动启动工具，适合经常打 CS2 的电脑。</span>
+                  </div>
+                  <label class="switch">
+                    <input type="checkbox" id="launchAtStartup" />
+                    <span></span>
+                  </label>
+                </div>
+              </section>
+
+              <section class="settings-list setting-section" data-settings-section="appearance" aria-label="外观设置">
+                <div class="setting-row">
+                  <div>
+                    <strong>全局强调色</strong>
+                    <span>影响按钮、选中状态、提示高亮和游戏小窗颜色。</span>
+                  </div>
+                  <div class="accent-picker" id="accentColorPicker" aria-label="全局强调色"></div>
+                </div>
+                <div class="setting-row setting-row--stacked background-setting-row">
+                  <div class="background-setting-header">
+                    <div>
+                      <strong>软件背景</strong>
+                      <span id="backgroundSummary">使用纯色背景，界面最清爽。</span>
+                    </div>
+                    <div class="background-setting-actions">
+                      <button class="secondary-button" type="button" id="chooseBackgroundButton">上传图片</button>
+                      <button class="primary-button" type="button" id="applyBackgroundButton">应用背景</button>
+                    </div>
+                  </div>
+                  <div class="background-settings-grid">
+                    <label>
+                      <span>背景来源</span>
+                      <select class="setting-select" id="backgroundModeSelect" aria-label="背景来源">
+                        <option value="none">无背景</option>
+                        <option value="official">官方预设</option>
+                        <option value="custom">自定义图片</option>
+                      </select>
+                    </label>
+                    <label>
+                      <span>官方预设</span>
+                      <select class="setting-select" id="backgroundPresetSelect" aria-label="官方背景预设">
+                        <option value="cs2-classic">CS2经典背景</option>
+                      </select>
+                    </label>
+                    <label>
+                      <span>背景亮度</span>
+                      <select class="setting-select" id="backgroundBrightnessSelect" aria-label="背景亮度">
+                        <option value="60">压暗</option>
+                        <option value="72">偏暗</option>
+                        <option value="82">标准</option>
+                        <option value="96">明亮</option>
+                        <option value="110">更亮</option>
+                      </select>
+                    </label>
+                    <label>
+                      <span>背景模糊</span>
+                      <select class="setting-select" id="backgroundBlurSelect" aria-label="背景模糊">
+                        <option value="0">清晰</option>
+                        <option value="4">轻微</option>
+                        <option value="8">柔和</option>
+                        <option value="14">明显</option>
+                        <option value="20">很模糊</option>
+                      </select>
+                    </label>
+                    <label>
+                      <span>界面透明度</span>
+                      <select class="setting-select" id="backgroundPanelOpacitySelect" aria-label="界面透明度">
+                        <option value="100">不透明</option>
+                        <option value="94">轻微透出</option>
+                        <option value="92">平衡</option>
+                        <option value="88">标准透出</option>
+                        <option value="78">明显透出</option>
+                        <option value="68">高透明</option>
+                      </select>
+                    </label>
+                  </div>
+                  <div class="background-preview" id="backgroundPreview" aria-hidden="true">
+                    <span>预览</span>
+                  </div>
+                </div>
+              </section>
+
+              <section class="settings-list setting-section" data-settings-section="overlay" aria-label="游戏小窗设置">
+                <div class="setting-row">
+                  <div>
+                    <strong>显示游戏小窗</strong>
+                    <span>游戏小窗会在游戏上方显示提醒，可拖动位置。</span>
+                  </div>
+                  <label class="switch">
+                    <input type="checkbox" id="orbVisible" checked />
+                    <span></span>
+                  </label>
+                </div>
+                <div class="setting-row">
+                  <div>
+                    <strong>小窗提醒时间</strong>
+                    <span>用于小窗提醒，默认 38 秒。</span>
+                  </div>
+                  <select class="setting-select" id="bombDurationSelect" aria-label="小窗提醒时间">
+                    <option value="35">35 秒</option>
+                    <option value="36">36 秒</option>
+                    <option value="37">37 秒</option>
+                    <option value="38" selected>38 秒</option>
+                    <option value="39">39 秒</option>
+                    <option value="40">40 秒</option>
+                    <option value="41">41 秒</option>
+                    <option value="42">42 秒</option>
+                    <option value="43">43 秒</option>
+                    <option value="44">44 秒</option>
+                    <option value="45">45 秒</option>
+                  </select>
+                </div>
+                <div class="setting-row">
+                  <div>
+                    <strong>游戏小窗位置</strong>
+                    <span>拖动小窗可以改变位置，显示异常时可恢复到主屏幕右侧。</span>
+                  </div>
+                  <button class="secondary-button" id="resetOrbButton">复位位置</button>
+                </div>
+              </section>
+
+              <section class="settings-list setting-section" data-settings-section="sound" aria-label="声音设置">
+                <div class="setting-row">
+                  <div>
+                    <strong>击杀音效音量</strong>
+                    <span>只影响本软件播放的击杀音效，用来压过游戏默认反馈。</span>
+                  </div>
+                  <select class="setting-select" id="killSoundVolumeSelect" aria-label="击杀音效音量">
+                    <option value="60">安静 60%</option>
+                    <option value="80">偏低 80%</option>
+                    <option value="100" selected>标准 100%</option>
+                    <option value="120">增强 120%</option>
+                    <option value="150">拉满 150%</option>
+                  </select>
+                </div>
+                <div class="setting-row">
+                  <div>
+                    <strong>压低 CS2 默认声音</strong>
+                    <span>实验功能：击杀时短暂降低 cs2.exe 音量，不改游戏文件。</span>
+                  </div>
+                  <label class="switch">
+                    <input type="checkbox" id="duckCs2Audio" />
+                    <span></span>
+                  </label>
+                </div>
+              </section>
+
+              <section class="settings-list setting-section" data-settings-section="other" aria-label="其他设置">
+                <div class="setting-row">
+                  <div>
+                    <strong>新手教程</strong>
+                    <span>重新查看首次启动时的简短说明和一键连接入口。</span>
+                  </div>
+                  <button class="secondary-button" id="replayOnboardingButton">重温教程</button>
+                </div>
+                <div class="setting-row">
+                  <div>
+                    <strong>关闭行为</strong>
+                    <span>点击右上角关闭时，可以选择完全退出，或最小化到后台继续运行。</span>
+                  </div>
+                  <button class="secondary-button danger-button" id="quitButton">退出软件</button>
+                </div>
+              </section>
+            </div>
+          </section>
+
+          <section class="panel-page" id="aboutPanel">
+            <div class="section-header">
+              <div>
+                <h1>关于项目</h1>
+                <p>CS2工具盒子仍在持续打磨，目标是把常用辅助能力做得简单、稳定、低打扰。</p>
+              </div>
+            </div>
+
+            <section class="about-author">
+              <div class="about-author__story">
+                <span class="status-kicker">Infatuation Studio</span>
+                <h2>CS2工具盒子</h2>
+                <p>这个工具面向 CS2 玩家：连接 GSI、显示游戏小窗、管理自动功能，并尽量把游戏内已经能看到的无关信息藏起来。</p>
+                <p>项目目前仍是测试版本，功能会继续围绕稳定性、低延迟音效、官方预设和界面可读性迭代。</p>
+                <p>开发过程中使用了少量 AI 辅助来整理代码和检查问题，但功能取舍、交互流程和界面文案都会围绕真实玩家的使用场景继续调整。</p>
+                <p>遇到问题、触发不正常、音效不播放，或者有好玩的自动玩法建议，可以通过 QQ 反馈。反馈时建议带上诊断页面的信息，排查会快很多。</p>
+                <div class="about-author__facts">
+                  <span>持续更新</span>
+                  <span>制作约 1 个月</span>
+                  <span>轻微 AI 辅助</span>
+                  <span>测试版继续打磨</span>
+                  <span>欢迎反馈建议</span>
+                </div>
+              </div>
+
+              <div class="author-code-grid">
+                <article class="author-code-card">
+                  <strong>反馈与建议</strong>
+                  <span>反馈 bug、推荐玩法、提建议都可以。最好简单说明问题场景，并附上诊断信息。</span>
+                  <img src="assets/author-qq.jpg" alt="反馈 QQ 二维码" />
+                </article>
+                <article class="author-code-card">
+                  <strong>支持项目维护</strong>
+                  <span>如果工具确实有帮助，可以随缘支持。赞助不是使用条件，正常功能不会受影响。</span>
+                  <img src="assets/author-alipay.jpg" alt="支付宝收款码" />
+                </article>
+              </div>
+            </section>
+          </section>
+
+          <section class="panel-page" id="sponsorPanel">
+            <div class="section-header">
+              <div>
+                <h1>赞助名单</h1>
+                <p>这里会展示支持过项目的用户。名单由开发者手动维护，不自动生成任何信息。</p>
+              </div>
+              <button class="secondary-button" id="refreshSponsorsButton" type="button">刷新名单</button>
+            </div>
+
+            <section class="sponsor-page">
+              <div class="sponsor-intro">
+                <strong>感谢每一份支持</strong>
+                <p>如果这个工具确实帮上忙，可以随缘支持。注意一定一定要备注好自己的名字，否则不会出现在名单上！</p>
+                <img src="assets/author-alipay.jpg" alt="支付宝收款码" />
+              </div>
+
+              <div class="sponsor-board" aria-label="赞助名单(不会实时更新)">
+                <div class="sponsor-board__header">
+                  <strong>名单</strong>
+                  <span id="sponsorStatus">正在读取线上名单</span>
+                </div>
+                <div class="sponsor-list" id="sponsorList">
+                  <div class="sponsor-empty">
+                    <strong>暂时没有赞助人</strong>
+                    <span>0</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </section>
+        </section>
+      </section>
+    </main>
+
+    <dialog class="custom-dialog" id="customDialog">
+      <form method="dialog" class="custom-dialog__panel">
+        <header class="custom-dialog__header">
+          <div>
+            <strong id="customDialogTitle">自动功能设置</strong>
+            <span id="customDialogSubtitle">选择条件和动作</span>
+          </div>
+          <button class="window-button" id="customDialogClose" value="cancel" aria-label="关闭">×</button>
+        </header>
+        <div class="custom-dialog__body" id="customDialogBody"></div>
+        <footer class="custom-dialog__footer">
+          <button class="secondary-button" type="button" id="customDialogTest">测试动作</button>
+          <button class="primary-button" type="button" id="customDialogSave">保存</button>
+        </footer>
+      </form>
+    </dialog>
+
+    <dialog class="confirm-dialog" id="confirmDialog">
+      <form method="dialog" class="confirm-dialog__panel">
+        <header>
+          <strong id="confirmTitle">确认操作</strong>
+          <span id="confirmMessage">这个操作需要确认。</span>
+        </header>
+        <footer>
+          <button class="secondary-button" type="button" id="confirmCancelButton">取消</button>
+          <button class="primary-button danger-primary-button" type="button" id="confirmOkButton">确认</button>
+        </footer>
+      </form>
+    </dialog>
+
+    <dialog class="setup-guide-dialog" id="setupGuideDialog">
+      <form method="dialog" class="setup-guide-dialog__panel">
+        <header>
+          <strong>配置已经写入</strong>
+          <span>接下来只需要重启 CS2。进入地图后，首页的 GSI 信号会变成正常。</span>
+        </header>
+        <div class="setup-guide-steps">
+          <span><b>1</b> 关闭正在运行的 CS2</span>
+          <span><b>2</b> 重新打开 CS2 并进入地图</span>
+          <span><b>3</b> 回到首页确认“GSI 游戏信号”变为正常</span>
+        </div>
+        <footer>
+          <button class="secondary-button" type="button" id="setupGuideStatusButton">去状态页</button>
+          <button class="primary-button" type="button" id="setupGuideDoneButton">知道了</button>
+        </footer>
+      </form>
+    </dialog>
+
+    <dialog class="close-choice-dialog" id="closeChoiceDialog">
+      <form method="dialog" class="close-choice-dialog__panel">
+        <header>
+          <strong>关闭 CS2工具盒子？</strong>
+          <span>选择全部关闭会退出所有后台进程；选择最小化会继续在后台运行，游戏小窗保持不动。</span>
+        </header>
+        <div class="close-choice-dialog__actions">
+          <button class="secondary-button danger-button" type="button" id="closeQuitButton">全部关闭</button>
+          <button class="primary-button" type="button" id="closeMinimizeButton">最小化到后台</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog class="donation-dialog" id="donationDialog">
+      <form method="dialog" class="donation-dialog__panel">
+        <header>
+          <strong>支持项目维护</strong>
+          <span>CS2工具盒子仍是测试版工具，后续会继续修复问题、补充玩法和优化体验。</span>
+        </header>
+        <div class="donation-dialog__body">
+          <img src="assets/author-alipay.jpg" alt="支付宝收款码" />
+          <p>赞助不是使用条件，正常功能不会受影响。也欢迎通过 QQ 反馈问题、提出建议、推荐官方预设。</p>
+        </div>
+        <footer>
+          <button class="secondary-button" type="button" id="donationLaterButton">以后再说</button>
+          <button class="primary-button" type="button" id="donationAboutButton">查看赞助页</button>
+        </footer>
+      </form>
+    </dialog>
+
+    <dialog class="online-notice-dialog" id="onlineNoticeDialog">
+      <form method="dialog" class="online-notice-dialog__panel">
+        <header>
+          <div>
+            <span class="online-notice-dialog__eyebrow" id="onlineNoticeType">更新提示</span>
+            <strong id="onlineNoticeTitle">软件公告</strong>
+          </div>
+          <button class="window-button" type="button" id="onlineNoticeCloseButton" aria-label="关闭">×</button>
+        </header>
+        <div class="online-notice-dialog__body">
+          <p id="onlineNoticeMessage">这里会显示来自线上数据仓库的更新提示。</p>
+          <pre id="onlineNoticeDetail" hidden></pre>
+        </div>
+        <footer>
+          <button class="primary-button" type="button" id="onlineNoticeOkButton">知道了</button>
+        </footer>
+      </form>
+    </dialog>
+
+    <div class="toast-stack" id="toastStack" aria-live="polite" aria-atomic="false"></div>
+
+    <script src="shared.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
