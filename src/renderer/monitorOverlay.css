@@ -1,0 +1,121 @@
+:root {
+  --overlay-bg: rgba(9, 12, 16, 0.86);
+  --overlay-text: #f5f7fa;
+  --overlay-muted: rgba(245, 247, 250, 0.68);
+  --overlay-accent: #7dd3b0;
+  --overlay-opacity: 0.86;
+  font-family: "HarmonyOS Sans SC", "Microsoft YaHei UI", "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: transparent;
+  color: var(--overlay-text);
+  -webkit-font-smoothing: antialiased;
+}
+
+body.color-blue { --overlay-accent: #72a7ff; }
+body.color-amber { --overlay-accent: #e7bf68; }
+body.color-white { --overlay-accent: #f5f7fa; }
+body.color-red { --overlay-accent: #ff6b6b; }
+
+.monitor-overlay {
+  width: 100%;
+  min-height: 100%;
+  padding: 10px 12px;
+  background: color-mix(in srgb, var(--overlay-bg) calc(var(--overlay-opacity) * 100%), transparent);
+  cursor: move;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-bottom: 4px;
+}
+
+header span {
+  display: none;
+}
+
+header strong {
+  color: var(--overlay-accent);
+  font-size: 11px;
+  font-weight: 760;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.monitor-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.metric {
+  display: grid;
+  grid-template-columns: minmax(76px, 1fr) auto;
+  align-items: baseline;
+  min-width: 0;
+  gap: 12px;
+  line-height: 1.08;
+}
+
+.metric span {
+  overflow: hidden;
+  color: var(--overlay-muted);
+  font-size: 12px;
+  font-weight: 680;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.metric strong {
+  overflow: visible;
+  color: var(--overlay-text);
+  font-size: 17px;
+  font-weight: 840;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.metric--vram {
+  grid-template-columns: minmax(60px, 0.72fr) minmax(max-content, 1fr);
+}
+
+.metric--vram strong,
+.metric--gpuVoltage strong {
+  font-size: 15px;
+}
+
+body.is-compact .monitor-overlay {
+  padding: 8px 10px;
+}
+
+body.is-compact header {
+  margin-bottom: 3px;
+}
+
+body.is-compact .monitor-grid {
+  gap: 2px;
+}
+
+body.is-compact .metric span {
+  font-size: 11px;
+}
+
+body.is-compact .metric strong {
+  font-size: 15px;
+}
