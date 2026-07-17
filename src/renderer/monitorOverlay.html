@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>监控悬浮窗</title>
+    <link rel="stylesheet" href="monitorOverlay.css" />
+  </head>
+  <body>
+    <main class="monitor-overlay" id="monitorOverlay">
+      <header>
+        <span>硬件监控</span>
+        <strong id="overlayStatus">读取中</strong>
+      </header>
+      <section class="monitor-grid" id="overlayGrid"></section>
+    </main>
+    <script src="shared.js"></script>
+    <script src="monitorOverlay.js"></script>
+  </body>
+</html>
